@@ -1,0 +1,80 @@
+// 定义变量
+vInt 'temp', 1000        // 模拟余额
+vInt 'input', 0          // 用户输入
+vInt 'totalPrice', 0     // 总计订单价格
+vInt 'itemPrice', 0      // 当前点单的价格
+
+state '开始', {
+    printMessage "欢迎来到机器人点餐系统，请选择：\n1. 查看菜单\n2. 点餐\n3. 结算\n4. 退出"
+    Input '1', '查看菜单'
+    Input '2', '点餐'
+    Input '3', '结算'
+    Input '4', '退出'
+    Default '开始' // 输入不正确，重新回到当前状态
+}
+
+state '查看菜单', {
+    printMessage "菜单：\n1. 汉堡 - 10元\n2. 薯条 - 5元\n3. 可乐 - 3元\n输入任意键返回主菜单。"
+    Input '', '开始' // 捕获任意输入返回
+    Default '开始'
+}
+
+state '点餐', {
+    printMessage "请输入您想点的菜品编号：\n1. 汉堡\n2. 薯条\n3. 可乐\n0. 返回主菜单"
+    Input '1', '选择汉堡'
+    Input '2', '选择薯条'
+    Input '3', '选择可乐'
+    Input '0', '开始'
+    Default '点餐'
+}
+
+state '选择汉堡', {
+    printMessage "您选择了汉堡 - 10元"
+    assign 'itemPrice', {10}
+    Default '确认点餐'
+}
+
+state '选择薯条', {
+    printMessage "您选择了薯条 - 5元"
+    assign 'itemPrice', {5}
+    Default '确认点餐'
+}
+
+state '选择可乐', {
+    printMessage "您选择了可乐 - 3元"
+    assign 'itemPrice', {3}
+    Default '确认点餐'
+}
+
+state '确认点餐', {
+    printMessage "确认点餐？\n1. 是\n2. 否"
+    Input '1', '添加到订单'
+    Input '2', '点餐' // 返回重新选择
+    Default '点餐'
+}
+
+state '添加到订单', {
+    assign 'totalPrice', {totalPrice + itemPrice}
+    printMessage "已将此项添加到订单，总计：%{totalPrice}元。输入任意键返回主菜单。"
+    Input '', '开始'
+    Default '开始'
+}
+
+state '结算', {
+    printMessage "您的订单总金额为%{totalPrice}元。输入1确认支付，或0返回主菜单。"
+    Input '1', '支付'
+    Input '0', '开始'
+    Default '结算'
+}
+
+state '支付', {
+    printMessage "支付成功！感谢您的使用。输入任意键返回主菜单。"
+    assign 'totalPrice', {0}  // 重置总价
+    Input '', '开始'
+    Default '开始'
+}
+
+state '退出', {
+    printMessage "感谢您的使用，再见！"
+    Default '结束'  // 在 '退出' 状态之后结束状态机
+}

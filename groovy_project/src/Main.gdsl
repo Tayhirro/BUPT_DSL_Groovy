@@ -1,0 +1,36 @@
+// 定义变量
+vInt 'temp', 1000
+vInt 'input',  0
+
+
+state '开始', {
+    printMessage "欢迎来到机器人服务，请选择：\n1. 查询余额\n2. 转账\n3. 退出"
+    Input '1', '查询余额'
+    Input '2', '转账'
+    Input '3', '退出'
+    Default '开始' // 如果输入不正确，重新回到当前状态
+}
+
+state '查询余额', {
+    printMessage "您的余额是%{temp}元。输入任意键返回主菜单。"
+    Input '2', '开始' // 捕获任意输入
+    Default '开始'
+}
+
+
+state '转账', {
+    printMessage "请输入转账金额："
+    scanInt 'input'
+    assign 'temp', {temp + input}
+    Default '确认转账'
+}
+
+state '确认转账', {
+    printMessage "转账成功！输入任意键返回主菜单。"
+    Input '', '开始'
+    Default '开始'
+}
+state '退出', {
+    printMessage "感谢您的使用，再见！"
+    Default '结束'  // 在 '退出' 状态之后结束状态机
+}
