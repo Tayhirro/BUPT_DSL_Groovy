@@ -1,0 +1,190 @@
+/* 导入 base.css 中定义的基础样式 */
+@import './base.css';
+
+
+/* Tailwind CSS 基础部分、组件部分和工具类部分 */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* 自定义样式 */
+
+body {
+  --safe-start: 27.388746598187613% 3.125%;
+  counter-reset: katexEqnNo mmlEqnNo;
+  font-family: Söhne, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+#app {
+  height: 100vh;
+}
+
+
+.text-copy-primary {
+  color: #333333;
+}
+
+
+.ease-curve-b {
+    animation-timing-function: cubic-bezier(.25,0,.75,1);
+}
+.ease-curve-d {
+    transition-timing-function: cubic-bezier(.6,0,.4,1);
+}
+.absolute {
+  position: absolute;
+}
+.left-1/2 {
+  left: 50%;
+}
+.-translate-x-1/2 {
+  transform: translateX(-50%);
+}
+.p-xs {
+    padding: 1.41875rem;
+}
+.gap-xs {
+    gap: 1.41875rem;
+}
+.-mt-m {
+    margin-top: -2.838125rem;
+}
+.mt-2xl {
+    margin-top: 6.75rem;
+}
+.mb-l {
+    margin-bottom: 4.2525rem;
+}
+
+
+.text-left {
+    text-align: left;
+}
+
+.py-xs {
+    padding-top: 1.41875rem;
+    padding-bottom: 1.41875rem;
+}
+.pt-s {
+    padding-top: 2.125625rem;
+}
+
+
+.navbar {
+  background-color: #f8f8f8;
+  padding: 1rem;
+}
+
+.logo {
+  width: 50px;
+  height: 50px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1rem;
+}
+
+.nav-item {
+  color: #333;
+  text-decoration: none;
+}
+
+.nav-item:hover {
+  color: #555;
+}
+
+
+
+
+
+.max-w-container {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%;
+}
+
+
+
+.backface-hidden {
+    backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    -ms-backface-visibility: hidden;
+}
+.will-change-transform {
+    will-change: transform;
+}
+
+
+
+
+/* 滚动后样式 */
+.scale-reduced {
+  transform: scale(1);
+}
+
+.scale-normal {
+  transform: scale(0.95);
+}
+
+
+
+
+a,
+.green {
+  text-decoration: none;
+  color: rgba(27, 27, 27, 0.93);
+  transition: 0.4s;
+  padding: 3px;
+}
+
+@media (hover: hover) {
+  a:hover {
+    background-color: rgba(27, 27, 27, 0.93);
+  }
+}
+
+
+
+@media (min-width: 1024px) {
+  body {
+    display: block; /* 避免使用 flex 影响布局 */
+  }
+
+  #app {
+    display: grid;
+  }
+}
+
+@media (max-width: 70.5rem) {
+    .max-w-container {
+        padding-left: 1.25rem;
+        padding-right: 1.25rem;
+    }
+}
+
+
+
+@media (min-width: 48rem) {
+        .prose .text-h1, .prose h1, .text-h1 {
+        font-size: 4.5rem;
+        line-height: 110%;
+        letter-spacing: -.02em;
+        font-weight: 400;
+    }
+      .m\:mt-xl {
+        margin-top: 5.05625rem;
+    }
+    .max-w-container {
+        max-width: 68rem;
+    }
+   .m\:col-span-8 {
+        grid-column: span 8 / span 8;
+    }
+    .m\:col-start-3 {
+        grid-column-start: 3;
+    }
+}
