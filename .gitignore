@@ -1,0 +1,3 @@
+# Ignore Docker-related files
+docker-compose.yml
+Dockerfile

@@ -23,6 +23,8 @@ import dashscope
 from functools import wraps
 
 
+import os
+
 
 
 
@@ -37,11 +39,12 @@ with open('./composer.json','r',encoding='utf-8') as file:
 #配置日志
 logging.basicConfig(level=logging.INFO)
 
+database_host = os.getenv("DATABASE_HOST", "mysql")  # 读取环境变量，默认使用 `mysql`
 
 app.config['REDIS_HOST'] = '{}'.format(config_data['database_root'])
 app.config['REDIS_PORT'] = config_data['redis_port']
 app.config['REDIS_DB'] = config_data['redis_db']
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:123456@{}:3306/robot'.format(config_data['database_root'])
+app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://tayhirro:123456@{database_host}:3306/robot"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # 绑定数据库
