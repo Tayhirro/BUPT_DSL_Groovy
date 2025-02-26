@@ -1,10 +1,9 @@
-from flask_sqlalchemy import SQLAlchemy
-import sqlalchemy
 
+import sqlalchemy
+from flask_sqlalchemy import SQLAlchemy
+# 定义 Login 表的 ORM 模型
 
 db = SQLAlchemy()
-
-# 定义 Login 表的 ORM 模型
 class Login(db.Model):
     __tablename__ = 'login'  # 对应数据库中的 login 表
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -14,3 +13,4 @@ class Login(db.Model):
     def __init__(self, username, password):
         self.username = username
         self.password = password
+

@@ -1,77 +1,58 @@
-from flask import Flask, render_template, jsonify,make_response,session
-from random import *
+from flask import Flask, render_template, jsonify,make_response,session,request
+import json
 from flask_cors import CORS
-from flask_sqlalchemy import SQLAlchemy
-from models import db, Login
-from flask import request
-import jwt  #用于token
+import socket
 import redis
 
+
+import jwt  #用于token
 import datetime
-from datetime import timedelta
 import bcrypt   #用于加密
-import socket
-import json
+import dashscope
 import logging
 
-from werkzeug.security import generate_password_hash, check_password_hash
+from models import Login,db
 
+from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import timedelta
 
 from http import HTTPStatus
-import dashscope
 
 from functools import wraps
-
-
-import os
-
-
-
-
-
-app = Flask(__name__)
-
-
-#读取配置文件
-templocal =""
-with open('./composer.json','r',encoding='utf-8') as file:
-    config_data = json.load(file)
-#配置日志
-logging.basicConfig(level=logging.INFO)
-
-database_host = os.getenv("DATABASE_HOST", "mysql")  # 读取环境变量，默认使用 `mysql`
-
-app.config['REDIS_HOST'] = '{}'.format(config_data['database_root'])
-app.config['REDIS_PORT'] = config_data['redis_port']
-app.config['REDIS_DB'] = config_data['redis_db']
-app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://tayhirro:123456@{database_host}:3306/robot"
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-# 绑定数据库
-db.init_app(app)
-# 创建数据库表（仅第一次需要）
-with app.app_context():
-    db.create_all()
-#初始化redis
-redis_client = redis.Redis(
-    host=app.config['REDIS_HOST'],
-    port=app.config['REDIS_PORT'],
-    db=app.config['REDIS_DB']
-)
-
-
-
-#解决跨域问题
-CORS(app , supports_credentials=True)
-
-
-
-
 
 secret_key = "123456"
 global_session_id = ""   #全局变量
 now_state =0
-dashscope.api_key = "sk-3429a846cf214878aee2c215a2f0d482"
+dashscope.api_key = "example"
+
+def create_app(config_path='./composer.json'):
+    app = Flask(__name__)
+    with open(config_path,'r',encoding='utf-8') as file:
+        config_data = json.load(file)
+    app.config.update({
+        'REDIS_HOST': config_data['database_root'],
+        'REDIS_PORT': config_data['redis_port'],
+        'REDIS_DB': config_data['redis_db'],
+        'SQLALCHEMY_DATABASE_URI': f"mysql+pymysql://root:123456@{config_data['database_root']}:3306/robot",
+        'SQLALCHEMY_TRACK_MODIFICATIONS': False
+    })
+    #初始化数据库
+    db.init_app(app)
+
+    # 创建数据库表（仅第一次需要）
+    with app.app_context():
+        db.create_all()
+    redis_client = redis.Redis(
+        host=app.config['REDIS_HOST'],
+        port=app.config['REDIS_PORT'],
+        db=app.config['REDIS_DB']
+    )
+    CORS(app, supports_credentials=True)
+    logging.basicConfig(level=logging.INFO)
+    return app,redis_client
+
+
+
 
 def generate_jwt(user_id):
     payload = {
@@ -101,10 +82,7 @@ def token_required(f):
 
     return decorated
 
-@app.route('/api',methods=['GET' 'POST'])
-@token_required
-def hello_world():  # put application's code here
-    return 'Hello World!'
+
 
 def call_groovy_service(user_input):
     global global_session_id
@@ -155,6 +133,10 @@ def call_baichuan_api(input_type, input_data):
             return {'error': '调用百川失败', 'message': response.message}, 500
     except Exception as e:
         return {'error': '百川调用异常', 'message': str(e)}, 500
+
+app,redis =create_app()
+
+
 @app.route('/api/home/postquestion', methods=['POST'])
 @token_required
 def get_question(user_id):
@@ -191,6 +173,7 @@ def get_question(user_id):
     # 返回结果
     return jsonify(result)
 @app.route('/api/query', methods=['GET'])
+@token_required
 def handle_query():
     try:
         # 获取请求中的用户名
@@ -218,6 +201,7 @@ def handle_query():
         return jsonify({"message": str(e), "status": "error"}), 500
 
 @app.route('/api/update-password', methods=['POST'])
+@token_required
 def handle_update_password():
     try:
         # 获取请求中的 JSON 数据
@@ -371,4 +355,5 @@ def handle_home(user_id):
 
 
 if __name__ == '__main__':
+
     app.run(debug=True)
